@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qst.dao.GoodDao">
+    <resultMap id="BaseResultMap" type="com.qst.entity.Good">
+        <id property="id" column="id"/>
+        <result property="goodName" column="good_name"/>
+        <result property="goodPrice" column="good_price"/>
+        <result property="goodStore" column="good_store"/>
+        <result property="saleNum" column="sale_num"/>
+        <result property="picture" column="picture"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="BaseResultMapWithBLOBs" type="com.qst.entity.Good">
+        <result property="detail" column="detail" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,good_name,good_price,good_store,sale_num,picture
+    </sql>
+    <sql id="Blob_Column_List">
+        detail
+    </sql>
+
+    <select id="findGoodList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from tb_good
+    </select>
+    <insert id="insertGood">
+        insert  into tb_good
+        (good_name,good_price,good_store,detail,picture,goods_type_id)
+        values
+        (#{goodName},#{goodPrice},#{goodStore},#{detail},#{picture},#{goodsType})
+    </insert>
+    <select id="findGoodListBySearch" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from tb_good
+        <where>
+            <if test="goodsType!=null and goodsType!=''">
+                and goods_type_id=#{goodsType}
+            </if>
+            <if test="keyword!=null and keyword!=''">
+                and good_name like CONCAT('%',#{keyword},'%')
+            </if>
+        </where>
+    </select>
+    <update id="updateGood" parameterType="com.qst.entity.Good">
+        update tb_good
+        set good_name= #{goodName},good_price=#{goodPrice},good_store=#{goodStore},detail=#{detail},picture=#{picture},goods_type_id=#{goodsType}
+        where id=#{id}
+    </update>
+    <delete id="deleteGood" parameterType="java.lang.Integer">
+        delete from tb_good
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="findGoodByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMapWithBLOBs">
+        select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>
+        from tb_good
+        where id=#{id}
+    </select>
+</mapper>

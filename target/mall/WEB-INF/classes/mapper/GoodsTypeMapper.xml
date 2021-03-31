@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qst.dao.GoodsTypeDao">
+    <resultMap id="BaseResultMap" type="com.qst.entity.GoodsType">
+        <id column="id" property="id"/>
+        <result column="typename" property="typename"/>
+        <result column="release_time" property="releaseTime"/>
+        <result column="audit_status" property="auditStatus"/>
+    </resultMap>
+
+    <select id="findGoodsTypeList" resultMap="BaseResultMap">
+        select *
+        from tb_goods_type
+    </select>
+
+    <insert id="insertGoodsType" parameterType="com.qst.entity.GoodsType">
+        insert into tb_goods_type
+        (typename,release_time,audit_status)
+        values (#{typename},#{releaseTime},#{auditStatus})
+    </insert>
+    <update id="auditApproved" parameterType="java.lang.Integer">
+        update tb_goods_type
+        set audit_status=1
+        where id=#{id}
+    </update>
+    <update id="auditCancel" parameterType="java.lang.Integer">
+        update tb_goods_type
+        set audit_status=0
+        where id=#{id}
+    </update>
+    <delete id="deleteGoodsTypeByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_goods_type
+        where id=#{id}
+    </delete>
+    <select id="findGoodsTypeByPrimary" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select *
+        from tb_goods_type
+        where id=#{id}
+    </select>
+    <update id="updateGoodsTypeByPrimaryKey" parameterType="com.qst.entity.GoodsType" >
+        update tb_goods_type
+        set typename=#{typename},release_time=#{releaseTime},audit_status=#{auditStatus}
+        where id=#{id}
+    </update>
+    <delete id="deleteGoodsTypeBatch" parameterType="java.lang.Integer">
+        delete from tb_goods_type
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
